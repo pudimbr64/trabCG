@@ -3,8 +3,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
-#include "cgTypes.h"
-#include "cgImage.h"
 #include <GL/glew.h>
 #include <GL/freeglut.h>
 #include <glm/glm.hpp>

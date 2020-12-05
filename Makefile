@@ -2,8 +2,8 @@ CC = g++
 
 GLLIBS = -lglut -lGLEW -lGL
 
-all: modelo.cpp
-	g++ -o modelo modelo.cpp cgImage.c cgTypes.c $(GLLIBS)
+all: celular.cpp
+	g++ -o celular celular.cpp $(GLLIBS)
 	
 clean:
-	rm -f modelo
+	rm -f celular
