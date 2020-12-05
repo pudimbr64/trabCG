@@ -1,1 +1,1 @@
-g++ -o modelo modelo.cpp cgImage.c cgTypes.c $(GLLIBS)
+g++ -o celular celular.cpp $(GLLIBS)
