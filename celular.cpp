@@ -10,7 +10,6 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtx/string_cast.hpp>
 #include <sys/time.h>
-// #include <chrono>
 
 /** Program variable. */
 int program;
@@ -24,7 +23,7 @@ int polygon_mode = GL_FILL;
 
 int mode = 1;
 
-bool type = true;
+bool type = false;
 
 int z = 0;
 
@@ -321,7 +320,6 @@ void keyboard(unsigned char key, int x, int y)
     case 27:
         exit(0);
     }
-
     glutPostRedisplay();
 }
 
