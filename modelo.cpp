@@ -21,7 +21,7 @@ unsigned int VAO;
 unsigned int VBO;
 
 int type_primitive = GL_TRIANGLES;
-int polygon_mode = GL_POINT;
+int polygon_mode = GL_FILL;
 
 int mode = 1;
 
@@ -31,7 +31,7 @@ int z = 0;
 
 double queuedMilliseconds = 0;
 
-int win_height, win_width = 600;
+int win_height = 1024, win_width = 768;
 
 float rotationAngleX, rotationAngleY, rotationAngleZ = 0.0f;
 float translationX, translationY, translationZ = 0.0f;
@@ -90,8 +90,8 @@ typedef struct Particle
 
 } Particle;
 
-Particle world[600][600];
-float vertices[600 * 600];
+Particle world[256][256];
+float vertices[256 * 256 * 18];
 
 void emptify(int x, int y)
 {
@@ -157,7 +157,20 @@ void setup()
 
     for (y = 599; y > 0; --y)
     {
-        for (y = 0; x < 600; ++x)
+        for (y = 0; x < 256; ++x)
+        {
+            emptify(x, y);
+        }
+    }
+}
+
+void doUpdate()
+{
+    int x, y;
+
+    for (y = 599; y > 0; --y)
+    {
+        for (y = 0; x < 256; ++x)
         {
             int id = world[x][y].typeId;
             switch (id)
@@ -175,14 +188,45 @@ void setup()
         }
     }
 
-    for (int i = 0; i < 600; i++)
+    int i, j;
+    for (i = 0; i < 256; i++)
     {
-        for (int j = 0; j < 600; j++)
+        for (j = 0; j < 256; j++)
         {
-            vertices[z] = mapRow2Y(i, j);
-            z++;
+            if (world[i][j].typeId != 0)
+            {
+                //primeiro triangulo
+                vertices[z] = mapRow2Y(i, 256 + 1);
+                vertices[z + 1] = mapColumn2X(j + 1, 256 + 1);
+                vertices[z + 2] = 0;
+                vertices[z + 3] = mapRow2Y(i, 256 + 1);
+                vertices[z + 4] = mapColumn2X(j, 256 + 1);
+                vertices[z + 5] = 0;
+                vertices[z + 6] = mapRow2Y(i + 1, 256 + 1);
+                vertices[z + 7] = mapColumn2X(j, 256 + 1);
+                vertices[z + 8] = 0;
+
+                //segundo triangulo
+
+                vertices[z + 9] = mapRow2Y(i + 1, 256 + 1);
+                vertices[z + 10] = mapColumn2X(j, 256 + 1);
+                vertices[z + 11] = 0;
+                vertices[z + 12] = mapRow2Y(i + 1, 256 + 1);
+                vertices[z + 13] = mapColumn2X(j + 1, 256 + 1);
+                vertices[z + 14] = 0;
+                vertices[z + 15] = mapRow2Y(i, 256 + 1);
+                vertices[z + 16] = mapColumn2X(j + 1, 256 + 1);
+                vertices[z + 17] = 0;
+                z += 18;
+            }
         }
     }
+    // z = 0;
+
+    // for (int a = 0; a < 256 * 256 * 18; a++)
+    // {
+    //     printf("%lf \n", vertices[a]);
+    // }
 
     // Vertex array.
     glGenVertexArrays(1, &VAO);
@@ -201,7 +245,7 @@ void setup()
 
     // Unbind Vertex Array Object.
     glBindVertexArray(0);
-    glPointSize(3);
+    glPointSize(5);
 }
 
 void initShaders()
@@ -267,8 +311,6 @@ void keyboard(unsigned char key, int x, int y)
 void updateFrame()
 {
 
-
-
     // // double timeDifference = startTime - timeNow;
     // queuedMilliseconds += timeDifference;
     // startTime = timeNow;
@@ -281,19 +323,19 @@ void updateFrame()
 
 void mouseMove(int x, int y)
 {
-    if ((x < 600 && x > 0) && (y < 600 && y > 0))
+    if ((x < 1024 && x > 0) && (y < 768 && y > 0))
     {
         switch (mode)
         {
         case 1: //sand
-            if (world[x][y].typeId == 0)
+            if (world[x / 4][y / 3].typeId == 0)
             {
-                world[x][y].color.r = 76;
-                world[x][y].color.g = 70;
-                world[x][y].color.b = 50;
-                world[x][y].hasUpdated = false;
-                world[x][y].lifetime = 0;
-                world[x][y].typeId = 1;
+                world[x / 4][y / 3].color.r = 76;
+                world[x / 4][y / 3].color.g = 70;
+                world[x / 4][y / 3].color.b = 50;
+                world[x / 4][y / 3].hasUpdated = false;
+                world[x / 4][y / 3].lifetime = 0;
+                world[x / 4][y / 3].typeId = 1;
             }
             else
             {
@@ -301,14 +343,14 @@ void mouseMove(int x, int y)
             }
             break;
         case 2: //water
-            if (world[x][y].typeId == 0)
+            if (world[x / 4][y / 3].typeId == 0)
             {
-                world[x][y].color.r = 2;
-                world[x][y].color.g = 68;
-                world[x][y].color.b = 89;
-                world[x][y].hasUpdated = false;
-                world[x][y].lifetime = 0;
-                world[x][y].typeId = 2;
+                world[x / 4][y / 3].color.r = 2;
+                world[x / 4][y / 3].color.g = 68;
+                world[x / 4][y / 3].color.b = 89;
+                world[x / 4][y / 3].hasUpdated = false;
+                world[x / 4][y / 3].lifetime = 0;
+                world[x / 4][y / 3].typeId = 2;
             }
             else
             {
@@ -317,8 +359,8 @@ void mouseMove(int x, int y)
             break;
         }
 
-        printf("%f\n", mapColumn2X(x, 600));
-        printf("%f\n", mapRow2Y(y, 600));
+        printf("%f\n", mapColumn2X(x, 1024));
+        printf("%f\n", mapRow2Y(y, 768));
         printf("NEXT\n");
     }
 }
@@ -366,7 +408,7 @@ void display()
     // Draws the triangle.
     glPolygonMode(GL_FRONT_AND_BACK, polygon_mode);
 
-    glDrawArrays(type_primitive, 0, z / 3);
+    glDrawArrays(type_primitive, 0, z);
     glutSwapBuffers();
 }
 void reshape(int width, int height)
@@ -386,12 +428,13 @@ int main(int argc, char **argv)
     glutInitContextVersion(4, 6);
     glutInitContextProfile(GLUT_CORE_PROFILE);
     glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA);
-    glutInitWindowSize(600, 600);
+    glutInitWindowSize(1024, 768);
     glutCreateWindow("Modelo");
     glewInit();
 
     // Init vertex data for the triangle.
-    // setup();
+    setup();
+    doUpdate();
 
     // Create shaders.
     initShaders();
@@ -400,6 +443,6 @@ int main(int argc, char **argv)
     glutKeyboardFunc(keyboard);
     glutDisplayFunc(display);
     glutMotionFunc(mouseMove);
-    glutIdleFunc(updateFrame);
+    // glutIdleFunc(doUpdate);
     glutMainLoop();
 }
