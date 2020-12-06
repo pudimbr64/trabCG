@@ -154,7 +154,7 @@ void update_water(int x, int y)
     }
     else if (world[x - 1][y + 1].typeId == 0)
     {
-        world[x + 1][y + 1] = world[x][y];
+        world[x - 1][y + 1] = world[x][y];
         emptify(x, y);
     }
     else if (world[x][y - 1].typeId == 0)
@@ -534,7 +534,7 @@ void display()
     glUniformMatrix4fv(loc, 1, GL_FALSE, glm::value_ptr(M));
 
     // Define projection matrix.
-    // glm::mat4 projection = glm::ortho(glm::radians(45.0f), (win_width / (float)win_height), 0.1f, 100.0f);
+    glm::mat4 projection = glm::perspective(glm::radians(45.0f), (win_width / (float)win_height), 0.1f, 100.0f);
     // Retrieve location of tranform variable in shader.
     loc = glGetUniformLocation(program, "projection");
     glUniformMatrix4fv(loc, 1, GL_FALSE, glm::value_ptr(M));
